@@ -89,33 +89,25 @@ namespace BLL
 
 
 
+                  
+                    bool elementDisplayed = driver.FindElement(By.ClassName("EXLBriefResultsPaginationLinkNext")).Displayed;
 
-
-
-                    //XLWorkbook wb = new XLWorkbook($@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\Downloads\Teste.xlsx");
-
-                    List<IWebElement> listaTitulos = driver.FindElements(By.ClassName("EXLResultTitle")).ToList();
-                    bool elementoDisplayed = driver.FindElement(By.ClassName("EXLBriefResultsPaginationLinkNext")).Displayed;
-                    foreach (var item in listaTitulos)
+                    while (elementDisplayed)
                     {
-                        if (elementoDisplayed)
+                        int index = 0;
+                        List<IWebElement> listaTitulos = driver.FindElements(By.ClassName("EXLResultTitle")).ToList();
+                        while (index < listaTitulos.Count())
                         {
                             using (StreamWriter SW = new StreamWriter($@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\Downloads\Saida.txt", true))
                             {
-                                SW.WriteLine(item.Text);
+                                SW.WriteLine(listaTitulos[index].Text);
+                                index++;
                             }
-
-                            try { driver.FindElement(By.ClassName("EXLBriefResultsPaginationLinkNext")).Click(); WebDriver.WaitForLoad(driver); }
-                            catch (Exception) { }
-                           
                         }
+
+                        try { driver.FindElement(By.ClassName("EXLBriefResultsPaginationLinkNext")).Click(); WebDriver.WaitForLoad(driver); }
+                        catch (Exception) { break; }
                     }
-
-
-                    //CRIA LOOGICA PARA PEGAR O TEXTO DAS TAGS 'A'
-                    //E ESCREVER NO EXCEL
-
-
                 }
                 catch (Exception)
                 {
