@@ -38,8 +38,6 @@ namespace BLL
                 }
 
 
-
-
                 try
                 {
 
@@ -89,10 +87,36 @@ namespace BLL
 
 
 
-                  
+
+
+
+                    //XLWorkbook wb = new XLWorkbook($@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\Downloads\Teste.xlsx");
+
                     bool elementDisplayed = driver.FindElement(By.ClassName("EXLBriefResultsPaginationLinkNext")).Displayed;
 
-                    while (elementDisplayed)
+                    //caso haja mais de uma página
+                    if (elementDisplayed)
+                    {
+
+
+                        while (elementDisplayed)
+                        {
+                            int index = 0;
+                            List<IWebElement> listaTitulos = driver.FindElements(By.ClassName("EXLResultTitle")).ToList();
+                            while (index < listaTitulos.Count())
+                            {
+                                using (StreamWriter SW = new StreamWriter($@"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\Downloads\Saida.txt", true))
+                                {
+                                    SW.WriteLine(listaTitulos[index].Text);
+                                    index++;
+                                }
+                            }
+
+                            try { driver.FindElement(By.ClassName("EXLBriefResultsPaginationLinkNext")).Click(); WebDriver.WaitForLoad(driver); }
+                            catch (Exception) { break; }
+                        }
+                    }
+                    else //caso não haja mais de uma página
                     {
                         int index = 0;
                         List<IWebElement> listaTitulos = driver.FindElements(By.ClassName("EXLResultTitle")).ToList();
@@ -104,21 +128,13 @@ namespace BLL
                                 index++;
                             }
                         }
-
-                        try { driver.FindElement(By.ClassName("EXLBriefResultsPaginationLinkNext")).Click(); WebDriver.WaitForLoad(driver); }
-                        catch (Exception) { break; }
                     }
                 }
                 catch (Exception)
                 {
 
                 }
-
-
             }
         }
-
-
-
     }
 }
